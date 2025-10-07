@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Taxi Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <h1>🚖 Taxi Trip Dashboard</h1>
+
+  <div class="filters">
+    <label>Start Date: <input type="date" id="start" /></label>
+    <label>End Date: <input type="date" id="end" /></label>
+    <label>Min Fare: <input type="number" id="min_fare" value="0" /></label>
+    <label>Max Fare: <input type="number" id="max_fare" value="500" /></label>
+    <label>Sort By:
+      <select id="sort_by">
+        <option value="pickup_dt">Pickup Time</option>
+        <option value="total_amount">Fare</option>
+        <option value="trip_distance_km">Distance</option>
+      </select>
+    </label>
+    <button id="apply">Apply</button>
+  </div>
+
+  <div id="results">
+    <p>Enter filters and click Apply to view results.</p>
+  </div>
+
+  <div id="table-container"></div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/static/dashboard.js"></script>
+</body>
+</html>
