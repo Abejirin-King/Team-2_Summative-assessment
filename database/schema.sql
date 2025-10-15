@@ -10,27 +10,30 @@ CREATE TABLE IF NOT EXISTS rate_codes (
   description VARCHAR(128) DEFAULT NULL
 ) ENGINE=InnoDB;
 
+-- Payment types
 CREATE TABLE IF NOT EXISTS payment_types (
   payment_type_id INT PRIMARY KEY,
   description VARCHAR(128) DEFAULT NULL
 ) ENGINE=InnoDB;
 
+-- Locations
 CREATE TABLE IF NOT EXISTS locations (
   location_id INT PRIMARY KEY,
   zone VARCHAR(128),
   borough VARCHAR(64)
 ) ENGINE=InnoDB;
 
+-- Trips table aligned with yellow_tripdata.csv
 CREATE TABLE IF NOT EXISTS trips (
   trip_id BIGINT AUTO_INCREMENT PRIMARY KEY,
   vendor_id INT NOT NULL,
-  pickup_dt DATETIME(6) NOT NULL,
-  dropoff_dt DATETIME(6) NOT NULL,
+  pickup_dt DATETIME(6) NOT NULL,             -- from tpep_pickup_datetime
+  dropoff_dt DATETIME(6) NOT NULL,            -- from tpep_dropoff_datetime
   passenger_count SMALLINT,
   trip_distance DECIMAL(8,3),
-  trip_distance_km DECIMAL(8,3),
-  trip_duration_s INT,
-  trip_speed_kmph DECIMAL(6,3),
+  trip_distance_km DECIMAL(8,3),              
+  trip_duration_s INT,                        
+  trip_speed_kmph DECIMAL(6,3),               
   fare_amount DECIMAL(9,2),
   extra DECIMAL(9,2),
   mta_tax DECIMAL(9,2),
@@ -40,25 +43,30 @@ CREATE TABLE IF NOT EXISTS trips (
   total_amount DECIMAL(9,2),
   congestion_surcharge DECIMAL(9,2),
   airport_fee DECIMAL(9,2),
-  cbd_congestion_fee DECIMAL(9,2),
   fare_per_km DECIMAL(9,3),
   tip_pct DECIMAL(5,4),
   pickup_hour TINYINT,
   pickup_weekday VARCHAR(16),
-  estimated_moving_time_s INT,
-  estimated_idle_time_s INT,
-  suspicious_flag BOOLEAN DEFAULT FALSE,
-  pu_location_id INT,
-  do_location_id INT,
-  rate_code_id INT DEFAULT NULL,
-  payment_type_id INT DEFAULT NULL,
+  rate_code_id INT DEFAULT NULL,              
+  payment_type_id INT DEFAULT NULL,           
+  pu_location_id INT,                         
+  do_location_id INT,                         
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE KEY uniq_trip_compound (vendor_id, pickup_dt, dropoff_dt, pu_location_id, do_location_id, passenger_count, trip_distance, fare_amount),
-  FOREIGN KEY (vendor_id) REFERENCES vendors(vendor_id) ON UPDATE CASCADE ON DELETE RESTRICT,
-  FOREIGN KEY (rate_code_id) REFERENCES rate_codes(rate_code_id) ON UPDATE CASCADE ON DELETE SET NULL,
-  FOREIGN KEY (payment_type_id) REFERENCES payment_types(payment_type_id) ON UPDATE CASCADE ON DELETE SET NULL,
-  FOREIGN KEY (pu_location_id) REFERENCES locations(location_id) ON UPDATE CASCADE ON DELETE SET NULL,
-  FOREIGN KEY (do_location_id) REFERENCES locations(location_id) ON UPDATE CASCADE ON DELETE SET NULL
+  UNIQUE KEY uniq_trip_compound (
+    vendor_id, pickup_dt, dropoff_dt,
+    pu_location_id, do_location_id,
+    passenger_count, trip_distance, fare_amount
+  ),
+  FOREIGN KEY (vendor_id) REFERENCES vendors(vendor_id)
+    ON UPDATE CASCADE ON DELETE RESTRICT,
+  FOREIGN KEY (rate_code_id) REFERENCES rate_codes(rate_code_id)
+    ON UPDATE CASCADE ON DELETE SET NULL,
+  FOREIGN KEY (payment_type_id) REFERENCES payment_types(payment_type_id)
+    ON UPDATE CASCADE ON DELETE SET NULL,
+  FOREIGN KEY (pu_location_id) REFERENCES locations(location_id)
+    ON UPDATE CASCADE ON DELETE SET NULL,
+  FOREIGN KEY (do_location_id) REFERENCES locations(location_id)
+    ON UPDATE CASCADE ON DELETE SET NULL
 ) ENGINE=InnoDB ROW_FORMAT=COMPRESSED;
 
 CREATE TABLE IF NOT EXISTS ingest_log (

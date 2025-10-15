@@ -1,168 +1,147 @@
-# 🚖 NYC Taxi Trip Dashboard
+# Taxi Data Flask App
 
-An interactive **Flask-based web app** for analyzing New York City taxi trip data.  
-The app loads data from a MySQL database, provides API endpoints for filtering,  
-and renders an interactive dashboard (table or charts) in the browser.
+## Overview
 
----
+This project is a Flask web dashboard that visualizes NYC Taxi Trip data loaded into a MySQL database. It displays average fares, distances, and speeds for trips within a selected date range.
 
-## 📁 Project Structure
+## Prerequisites
 
-```
-NYC_taxi_app/
-│
-├── app.py                   # Main Flask app (runs backend + routes)
-├── load_to_mysql.py         # Script for loading CSV data into MySQL
-├── requirements.txt         # Python dependencies
-├── README.md                # Project documentation
-│
-├── database/
-│   └── schema.sql           # SQL file defining table structure
-│
-├── static/                  # Static frontend assets
-│   ├── style.css            # Dashboard styling
-│   └── dashboard.js         # JS logic for fetching and displaying data
-│
-└── templates/
-    └── index.html           # HTML template for Flask rendering
-```
+Before starting, ensure you have the following installed:
 
----
+| Tool | Purpose | Version (recommended) |
+|------|---------|---------------------|
+| Python | Backend runtime | 3.9 or newer |
+| MySQL Server | Stores taxi data | 8.0+ |
+| pip | Python package manager | latest |
+| VS Code (optional) | Development IDE | latest |
 
-## ⚙️ Setup Instructions
+## Setup Instructions (Use VS Code)
 
-### 1. Clone the repository
+### Step 1: Clone or Download the Project
+
 ```bash
-git clone https://github.com/<your-username>/NYC_taxi_app.git
-cd NYC_taxi_app
+git clone https://github.com/your-username/Team-2_Summative-assessment.git
+cd Team-2_Summative-assessment
 ```
 
----
+(If you downloaded as a ZIP, just extract it and open in VS Code.)
 
-### 2. Create a virtual environment
+### Step 2: Create a Python Virtual Environment
+
+**Windows:**
 ```bash
 python -m venv venv
-venv\Scripts\activate   # Windows
-# OR
-source venv/bin/activate  # macOS/Linux
+venv\Scripts\activate
 ```
 
----
-
-### 3. Install dependencies
+**macOS/Linux:**
 ```bash
-pip install -r requirements.txt
+python3 -m venv venv
+source venv/bin/activate
 ```
 
----
+### Step 3: Install Dependencies
 
-### 4. Set up your database
-Make sure you have **MySQL** installed and running.
+```bash
+pip install flask mysql-connector-python python-dotenv pandas
+```
 
-Create a database:
+### Step 4: Create the MySQL Database
+
+Open your MySQL client and run:
+
 ```sql
-CREATE DATABASE nyc_taxi;
-USE nyc_taxi;
+CREATE DATABASE taxi_data;
+CREATE USER 'etl_user'@'localhost' IDENTIFIED BY 'King40$$';
+GRANT ALL PRIVILEGES ON taxi_data.* TO 'etl_user'@'localhost';
+FLUSH PRIVILEGES;
 ```
 
-Then execute the schema file:
-```sql
-SOURCE database/schema.sql;
-```
+Then run the SQL schema file you used earlier (or recreate your tables using your ETL script).
 
----
+### Step 5: Load Data into MySQL
 
-### 5. Load data into MySQL
-You can load your CSV data into MySQL using:
+Run your data ingestion script to load the cleaned CSV file:
 
 ```bash
 python load_to_mysql.py
 ```
 
-Make sure your connection details inside `load_to_mysql.py` are correct:
-```python
-engine = create_engine("mysql+pymysql://root:yourpassword@localhost/nyc_taxi")
+You should see output like:
+
+```
+✅ CSV file found
+✅ Connected to database
+➡ Processing chunk 1 with 5000 rows
+✅ Inserted 5000 rows in chunk 1
+✅ All done! Inserted: 15000, Errors: 0
 ```
 
----
+## Running the Flask App
 
-### 6. Run the Flask app
-Start the server:
+Start the Flask server:
+
 ```bash
 python app.py
 ```
 
 If successful, you’ll see:
+
 ```
-Running on http://127.0.0.1:5000/
-```
-
----
-
-### 7. Open the Dashboard
-Visit [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser.
-
-You’ll see the dashboard page served from `templates/index.html`,  
-which loads its logic and styling from the `/static/` folder.
-
----
-
-## 🧩 Features
-
-✅ Filter by:
-- **Trip Duration**  
-- **Fare Amount**  
-- **Trip Distance**  
-- **Pickup & Dropoff Locations**
-
-✅ Display results in a **table format** (with sorting and pagination)
-
-✅ Fetches data dynamically from Flask API endpoints (`/filter`)
-
-✅ Responsive and minimalist **CSS dashboard layout**
-
----
-
-## 📊 Example API Request
-
-**Endpoint:**
-```
-GET /filter?min_duration=5&max_duration=30
+ * Running on http://127.0.0.1:5000
 ```
 
-**Response:**
-```json
-{
-  "total_trips": 812,
-  "avg_duration": 18.5,
-  "avg_distance": 4.2,
-  "avg_fare": 14.8
-}
+Then open your browser and visit:
+
+👉 http://127.0.0.1:5000
+
+## App Features
+
+**Frontend (index.html):**
+- Date range selection
+- Min/Max fare filters
+- “Sort by” dropdown (Pickup time, fare, etc.)
+- Table of recent trips
+- Summary stats: average fare, distance, and speed
+
+**Backend (Flask):**
+- `/api/trips` endpoint queries MySQL dynamically
+- Calculates distance (km) and speed (km/h)
+- Returns data as JSON for the frontend to render
+
+## Folder Structure
+
+```
+taxi-data-flask-app/
+│
+├── app.py                    # Flask web app
+├── load_to_mysql.py          # Data ingestion script
+├── cleaned_data.csv          # Clean dataset
+│
+├── templates/
+│   └── index.html            # Frontend HTML
+│
+├── static/
+│   ├── style.css             # CSS styling
+│   └── script.js             # Frontend logic
+│
+└── README.md                 # Project documentation
 ```
 
----
+## Common Issues
 
-## 🧰 Tech Stack
+| Issue | Fix |
+|-------|-----|
+| ModuleNotFoundError: No module named 'flask' | Make sure you activated your virtual environment and ran `pip install flask` |
+| Access denied for user 'etl_user'@'localhost' | Run the SQL GRANT commands again or check your MySQL password |
+| Out of range value for column 'trip_speed_kmph' | Ensure your ETL script caps unrealistic speed values (e.g. >300 km/h) |
+| Webpage shows no data | Check the date range filters and make sure your trips table has data within that range |
 
-| Layer        | Technology |
-|--------------|-------------|
-| **Backend**  | Python (Flask, SQLAlchemy, Pandas) |
-| **Database** | MySQL |
-| **Frontend** | HTML, CSS, JavaScript |
-| **Visualization** | Table rendering via DOM |
-| **Environment** | venv / dotenv |
+## Optional Enhancements
 
----
+- Add charts (e.g. Plotly or Chart.js)
+- Export filtered data as CSV
+- Add authentication (Flask-Login)
+- Containerize using Docker
+- Deploy to AWS / Render / Railway
 
-## 🚀 Future Improvements
-- Add map-based pickup/dropoff visualization  
-- Include charts for fare vs. distance trends  
-- Pagination for large result sets  
-- Deploy with Docker or Render  
-
----
-
-## 🧑‍💻 Author
-
-**King Obafemi Abejirin**  
-Made with ❤️ using Python, Flask, and MySQL.
