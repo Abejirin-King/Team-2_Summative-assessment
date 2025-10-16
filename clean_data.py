@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv("yellow_tripdata.csv")
+df = pd.read_csv("yellow_tripdata.csv", low_memory=False)
 
 columns_to_keep = [
     "VendorID", "tpep_pickup_datetime", "tpep_dropoff_datetime",
