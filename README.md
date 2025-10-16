@@ -93,7 +93,7 @@ If successful, you’ll see:
 
 Then open your browser and visit:
 
-👉 http://127.0.0.1:5000
+ http://127.0.0.1:5000
 
 ## App Features
 
@@ -137,11 +137,6 @@ taxi-data-flask-app/
 | Out of range value for column 'trip_speed_kmph' | Ensure your ETL script caps unrealistic speed values (e.g. >300 km/h) |
 | Webpage shows no data | Check the date range filters and make sure your trips table has data within that range |
 
-## Optional Enhancements
+## Video Walkthrough
 
-- Add charts (e.g. Plotly or Chart.js)
-- Export filtered data as CSV
-- Add authentication (Flask-Login)
-- Containerize using Docker
-- Deploy to AWS / Render / Railway
-
+https://youtu.be/TAojUZEXefo
