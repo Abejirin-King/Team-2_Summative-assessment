@@ -57,7 +57,7 @@ GRANT ALL PRIVILEGES ON taxi_data.* TO 'etl_user'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
-Then run the SQL schema file you used earlier (or recreate your tables using your ETL script).
+Then run the SQL schema file (database/schema.sql).
 
 ### Step 5: Load Data into MySQL
 
