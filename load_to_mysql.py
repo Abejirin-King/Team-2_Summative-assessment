@@ -90,7 +90,6 @@ def row_to_tuple(row):
         safe_float(row.get("tolls_amount")),
         safe_float(row.get("improvement_surcharge")),
         safe_float(row.get("total_amount")),
-        None,  
         None, 
         None,  
         None,  
@@ -111,7 +110,7 @@ def build_insert_sql():
         "vendor_id","pickup_dt","dropoff_dt","passenger_count",
         "trip_distance","trip_distance_km","trip_duration_s","trip_speed_kmph",
         "fare_amount","extra","mta_tax","tip_amount","tolls_amount",
-        "improvement_surcharge","total_amount","congestion_surcharge",
+        "improvement_surcharge","total_amount",
         "airport_fee","cbd_congestion_fee","fare_per_km","tip_pct",
         "pickup_hour","pickup_weekday","estimated_moving_time_s",
         "estimated_idle_time_s","suspicious_flag","pu_location_id",
@@ -181,4 +180,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
