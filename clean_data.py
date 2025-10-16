@@ -22,4 +22,4 @@ df["trip_duration_min"] = (df["tpep_dropoff_datetime"] - df["tpep_pickup_datetim
 
 df.to_csv("cleaned_data.csv", index=False)
 
-print("✅ cleaned_data.csv created successfully!")
+print("cleaned_data.csv created")
