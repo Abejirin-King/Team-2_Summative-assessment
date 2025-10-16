@@ -6,11 +6,8 @@ from mysql.connector import errorcode
 from datetime import datetime
 from dotenv import load_dotenv
 
-print("✅ Script started")
+print("Script started")
 
-# -------------------------
-# Load environment variables
-# -------------------------
 load_dotenv()
 
 DB_USER = os.getenv("DB_USER", "etl_user")
@@ -22,9 +19,6 @@ DB_PORT = int(os.getenv("DB_PORT", 3306))
 CLEANED_CSV = "cleaned_data.csv"
 BATCH_SIZE = 5000
 
-# -------------------------
-# Connect to DB
-# -------------------------
 def connect_db():
     try:
         return mysql.connector.connect(
@@ -35,12 +29,9 @@ def connect_db():
             port=DB_PORT
         )
     except mysql.connector.Error as err:
-        print(f"❌ Database connection error: {err}")
+        print(f"Database connection error: {err}")
         raise
 
-# -------------------------
-# Error logger
-# -------------------------
 def log_ingest_error(cur, reason, raw_row):
     raw_json = json.dumps({k: str(v) for k, v in raw_row.items()}, ensure_ascii=False)
     cur.execute(
@@ -48,9 +39,6 @@ def log_ingest_error(cur, reason, raw_row):
         (reason[:255], raw_json)
     )
 
-# -------------------------
-# Row → Tuple (29 values total)
-# -------------------------
 def row_to_tuple(row):
     def safe_float(v):
         if pd.isna(v): return None
@@ -70,7 +58,6 @@ def row_to_tuple(row):
         if pd.isna(v): return None
         return pd.to_datetime(v).to_pydatetime().replace(tzinfo=None)
 
-    # Calculate derived fields
     pickup = safe_dt(row.get("tpep_pickup_datetime"))
     dropoff = safe_dt(row.get("tpep_dropoff_datetime"))
 
@@ -85,7 +72,6 @@ def row_to_tuple(row):
             if speed_kmph > 200 or speed_kmph < 0:
                 speed_kmph = None
 
-    # Convert miles → km
     distance_km = distance * 1.609 if distance else None
 
     return (
@@ -104,25 +90,22 @@ def row_to_tuple(row):
         safe_float(row.get("tolls_amount")),
         safe_float(row.get("improvement_surcharge")),
         safe_float(row.get("total_amount")),
-        None,  # congestion_surcharge
-        None,  # airport_fee
-        None,  # cbd_congestion_fee
-        None,  # fare_per_km
-        None,  # tip_pct
-        None,  # pickup_hour
-        None,  # pickup_weekday
-        None,  # estimated_moving_time_s
-        None,  # estimated_idle_time_s
-        False,  # suspicious_flag
+        None,  
+        None, 
+        None,  
+        None,  
+        None,  
+        None,  
+        None,  
+        None,  
+        None,  
+        False, 
         safe_int(row.get("PULocationID")),
         safe_int(row.get("DOLocationID")),
         safe_int(row.get("RatecodeID")),
         safe_int(row.get("payment_type"))
     )
 
-# -------------------------
-# SQL statement (29 columns)
-# -------------------------
 def build_insert_sql():
     cols = [
         "vendor_id","pickup_dt","dropoff_dt","passenger_count",
@@ -142,19 +125,16 @@ def build_insert_sql():
     """
     return f"INSERT INTO trips ({', '.join(cols)}) VALUES ({placeholders}) {ondup}"
 
-# -------------------------
-# Main
-# -------------------------
 def main():
     print("Step 1: Checking if CSV exists...")
     if not os.path.exists(CLEANED_CSV):
         raise FileNotFoundError(f"{CLEANED_CSV} not found.")
-    print("✅ CSV file found")
+    print("CSV file found")
 
     print("Step 2: Connecting to database...")
     conn = connect_db()
     cur = conn.cursor(buffered=True)
-    print("✅ Connected to database")
+    print("Connected to database")
 
     insert_sql = build_insert_sql()
     total_inserted = 0
@@ -186,18 +166,19 @@ def main():
             cur.executemany(insert_sql, rows_to_insert)
             conn.commit()
             total_inserted += len(rows_to_insert)
-            print(f"✅ Inserted {len(rows_to_insert)} rows in chunk {chunk_index + 1}")
+            print(f"Inserted {len(rows_to_insert)} rows in chunk {chunk_index + 1}")
         except mysql.connector.Error as err:
             conn.rollback()
             total_errors += len(rows_to_insert)
-            print(f"❌ MySQL insert failed: {err}")
+            print(f"MySQL insert failed: {err}")
             for r in rows_to_insert:
                 log_ingest_error(cur, f"MySQL insert failed: {str(err)}", {"row_tuple": str(r)})
             conn.commit()
 
     cur.close()
     conn.close()
-    print(f"✅ Done! Inserted: {total_inserted}, Errors: {total_errors}")
+    print(f"Done! Inserted: {total_inserted}, Errors: {total_errors}")
 
 if __name__ == "__main__":
     main()
+
