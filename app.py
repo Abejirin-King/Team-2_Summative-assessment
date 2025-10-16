@@ -34,7 +34,6 @@ def get_trips():
         conn = get_db_connection()
         cur = conn.cursor(dictionary=True)
 
-        # ✅ Compute trip metrics using correct column names
         summary_query = """
             SELECT 
                 COUNT(*) AS total_trips,
@@ -51,7 +50,6 @@ def get_trips():
         cur.execute(summary_query, (start_date, end_date, min_fare, max_fare))
         summary = cur.fetchone()
 
-        # ✅ Details for table
         details_query = f"""
             SELECT 
                 pickup_dt,
@@ -83,3 +81,4 @@ def get_trips():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
