@@ -70,11 +70,11 @@ python load_to_mysql.py
 You should see output like:
 
 ```
-✅ CSV file found
-✅ Connected to database
+ CSV file found
+ Connected to database
 ➡ Processing chunk 1 with 5000 rows
-✅ Inserted 5000 rows in chunk 1
-✅ All done! Inserted: 15000, Errors: 0
+ Inserted 5000 rows in chunk 1
+ All done! Inserted: 15000, Errors: 0
 ```
 
 ## Running the Flask App
