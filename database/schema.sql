@@ -10,25 +10,22 @@ CREATE TABLE IF NOT EXISTS rate_codes (
   description VARCHAR(128) DEFAULT NULL
 ) ENGINE=InnoDB;
 
--- Payment types
 CREATE TABLE IF NOT EXISTS payment_types (
   payment_type_id INT PRIMARY KEY,
   description VARCHAR(128) DEFAULT NULL
 ) ENGINE=InnoDB;
 
--- Locations
 CREATE TABLE IF NOT EXISTS locations (
   location_id INT PRIMARY KEY,
   zone VARCHAR(128),
   borough VARCHAR(64)
 ) ENGINE=InnoDB;
 
--- Trips table aligned with yellow_tripdata.csv
 CREATE TABLE IF NOT EXISTS trips (
   trip_id BIGINT AUTO_INCREMENT PRIMARY KEY,
   vendor_id INT NOT NULL,
-  pickup_dt DATETIME(6) NOT NULL,             -- from tpep_pickup_datetime
-  dropoff_dt DATETIME(6) NOT NULL,            -- from tpep_dropoff_datetime
+  pickup_dt DATETIME(6) NOT NULL,             
+  dropoff_dt DATETIME(6) NOT NULL,           
   passenger_count SMALLINT,
   trip_distance DECIMAL(8,3),
   trip_distance_km DECIMAL(8,3),              
@@ -84,3 +81,4 @@ CREATE INDEX idx_trips_do ON trips(do_location_id);
 CREATE INDEX idx_trips_speed ON trips(trip_speed_kmph);
 CREATE INDEX idx_trips_fare ON trips(total_amount);
 CREATE INDEX idx_trips_pickup_compound ON trips(pickup_dt, pu_location_id);
+
