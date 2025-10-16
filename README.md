@@ -24,7 +24,7 @@ git clone https://github.com/your-username/Team-2_Summative-assessment.git
 cd Team-2_Summative-assessment
 ```
 
-(If you downloaded as a ZIP, just extract it and open in VS Code.)
+(Use the zip file, as the csv file was too large to push to github)
 
 ### Step 2: Create a Python Virtual Environment
 
